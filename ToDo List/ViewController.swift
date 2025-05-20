@@ -7,11 +7,12 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
 
+    //MARK: - View life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .red
     }
 
 
