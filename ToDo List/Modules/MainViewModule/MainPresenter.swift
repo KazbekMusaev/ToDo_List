@@ -9,6 +9,10 @@ import Foundation
 
 protocol MainPresenterProtocol: AnyObject {
     func viewDidLoaded()
+    func didLoadTasks(_ model: [ToDoItem])
+    func getError(_ error: Error)
+    func didSelectItem()
+    func presentCreateNewItemModule()
 }
 
 final class MainPresenter {
@@ -24,7 +28,24 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainPresenterProtocol {
+    
     func viewDidLoaded() {
         interactor.fetchData()
+    }
+    
+    func didLoadTasks(_ model: [ToDoItem]) {
+        view?.showTasks(model)
+    }
+    
+    func getError(_ error: any Error) {
+        view?.showError(error.localizedDescription)
+    }
+    
+    func didSelectItem() {
+        print("select")
+    }
+    
+    func presentCreateNewItemModule() {
+        router.showCreateScreen()
     }
 }
