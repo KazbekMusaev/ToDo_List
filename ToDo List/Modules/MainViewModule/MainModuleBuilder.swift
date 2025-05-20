@@ -8,7 +8,7 @@
 import UIKit
 
 final class MainModuleBuilder {
-    static func build() -> UIViewController {
+    static func build() -> UINavigationController {
         let viewController = MainViewController()
         let interactor = MainInteractor()
         let router = MainRouter()
@@ -19,6 +19,10 @@ final class MainModuleBuilder {
         presenter.view = viewController
         interactor.presenter = presenter
         router.presenter = presenter
-        return viewController
+        router.viewController = viewController
+        
+        let navController = UINavigationController(rootViewController: viewController)
+        
+        return navController
     }
 }
