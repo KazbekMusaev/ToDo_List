@@ -15,7 +15,7 @@ struct ToDoModel: Decodable {
 }
 
 struct ToDoItem: Decodable {
-    let id: String
+    let id: Int
     let todo: String
     let completed: Bool
     let userId: Int

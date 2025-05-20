@@ -18,7 +18,6 @@ final class MainViewController: UIViewController {
     //MARK: - View life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         presenter?.viewDidLoaded()
     }
     
