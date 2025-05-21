@@ -58,3 +58,20 @@ final class CoreManager {
     }
 }
 
+extension CoreManager {
+    static func filtredData(_ data: [ToDoCDItem]) -> [ToDoItem] {
+        var model: [ToDoItem] = []
+        data.forEach { item in
+            let toDoItem = ToDoItem(
+                id: Int(item.id),
+                todo: item.text ?? "nill",
+                completed: item.isCompleted,
+                userId: Int(item.userId),
+                date: item.date,
+                label: item.label
+            )
+            model.append(toDoItem)
+        }
+        return model
+    }
+}

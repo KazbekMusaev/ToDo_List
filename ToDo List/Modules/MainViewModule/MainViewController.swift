@@ -13,6 +13,7 @@ protocol MainViewProtocol: AnyObject {
     func changeItem(_ item: ToDoItem)
     func reloadItem(_ item: ToDoItem)
     func tapToCreateButton()
+    func showSearchResult(_ model: [ToDoItem])
 }
 
 final class MainViewController: UIViewController {
@@ -155,6 +156,15 @@ extension MainViewController: UICollectionViewDataSource {
 
 //MARK: - MainViewProtocolExt
 extension MainViewController: MainViewProtocol {
+    func showSearchResult(_ model: [ToDoItem]) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.model = model
+            self.todoCollectioView.reloadData()
+            self.allTodoCountLabel.text = "\(model.count) Задач"
+        }
+    }
+    
     func tapToCreateButton() {
         presenter?.presentCreateNewItemModule()
     }
@@ -201,7 +211,8 @@ extension MainViewController: UISearchTextFieldDelegate {
     
     //Здесь будет реализация поиска. Сделаю при вводе каждой новой буквы, так как данные хранятся в кор дате. И у нас не идет загрузка из сети
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        print(textField.text)
+        guard let text = textField.text else { return }
+        presenter?.startSeacrh(text)
     }
     
 }
