@@ -50,4 +50,41 @@ final class ComponentBuilder {
         divider.backgroundColor = .dateLabel
         return divider
     }
+    
+    static func makePreview(_ item: ToDoItem) -> UIViewController {
+        let label = ComponentBuilder.getLabelForTodo()
+        let dateLabel = ComponentBuilder.getDateLabel()
+        let textLabel = ComponentBuilder.getDescriptionForTodo()
+        
+        let vc = UIViewController()
+        vc.view.backgroundColor = .bottomPanel
+        vc.view.layer.cornerRadius = 12
+        
+        vc.view.addSubview(label)
+        vc.view.addSubview(textLabel)
+        vc.view.addSubview(dateLabel)
+        
+        label.text = item.label
+        textLabel.text = item.todo
+        dateLabel.text = item.date?.getStr()
+        
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 12),
+            label.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: 16),
+            label.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor, constant: -16),
+            
+            textLabel.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: 16),
+            textLabel.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor, constant: -16),
+            textLabel.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 6),
+            
+            dateLabel.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: 16),
+            dateLabel.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor, constant: -16),
+            dateLabel.topAnchor.constraint(equalTo: textLabel.bottomAnchor, constant: 6),
+            dateLabel.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: -12),
+        ])
+        
+        vc.preferredContentSize = CGSize(width: 320, height: 106)
+        return vc
+    }
+    
 }

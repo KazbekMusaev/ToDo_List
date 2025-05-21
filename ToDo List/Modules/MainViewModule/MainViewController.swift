@@ -16,6 +16,7 @@ protocol MainViewProtocol: AnyObject {
     func showSearchResult(_ model: [ToDoItem])
     func reloadCollectionView(_ model: [ToDoItem])
     func showNavigationController()
+    func deleteCompleted(_ item: ToDoItem)
 }
 
 final class MainViewController: UIViewController {
@@ -131,9 +132,37 @@ final class MainViewController: UIViewController {
 
 //MARK: - UICollectionViewExt
 extension MainViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        presenter?.presentCreateNewItemModule()
-//    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        contextMenuConfigurationForItemAt indexPath: IndexPath,
+                        point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let item = model[indexPath.item]
+        
+        return UIContextMenuConfiguration(
+            identifier: indexPath as NSIndexPath,
+            previewProvider: {
+                return ComponentBuilder.makePreview(item)
+            },
+            actionProvider: { [weak self] _ in
+
+                let edit = UIAction(title: "Редактировать", image: UIImage(systemName: "pencil")) { _ in
+                    print("edit")
+                }
+                
+                let share = UIAction(title: "Поделиться", image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                    print("share")
+                }
+                
+                let delete = UIAction(title: "Удалить", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    self?.presenter?.tapToDeleteItem(item)
+                }
+                
+                return UIMenu(title: "", children: [edit, share, delete])
+            }
+        )
+    }
+    
 }
 
 extension MainViewController: UICollectionViewDataSource {
@@ -157,6 +186,18 @@ extension MainViewController: UICollectionViewDataSource {
 
 //MARK: - MainViewProtocolExt
 extension MainViewController: MainViewProtocol {
+    func deleteCompleted(_ item: ToDoItem) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            guard let index = self.model.firstIndex(where: { $0.id == item.id }) else { return }
+            self.model.remove(at: index)
+            self.todoCollectioView.deleteItems(at: [IndexPath(item: index, section: 0)])
+            UIView.animate(withDuration: 0.5) {
+                self.allTodoCountLabel.text = "\(self.model.count) Задач"
+            }
+        }
+    }
+    
     func showNavigationController() {
         navigationController?.navigationBar.isHidden = false
     }
@@ -165,6 +206,9 @@ extension MainViewController: MainViewProtocol {
         DispatchQueue.main.async { [weak self] in
             self?.model = model
             self?.todoCollectioView.reloadData()
+            UIView.animate(withDuration: 0.5) {
+                self?.allTodoCountLabel.text = "\(model.count) Задач"
+            }
         }
     }
     
