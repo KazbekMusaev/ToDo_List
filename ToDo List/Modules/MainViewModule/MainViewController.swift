@@ -12,6 +12,7 @@ protocol MainViewProtocol: AnyObject {
     func showError(_ errorText: String)
     func changeItem(_ item: ToDoItem)
     func reloadItem(_ item: ToDoItem)
+    func tapToCreateButton()
 }
 
 final class MainViewController: UIViewController {
@@ -35,12 +36,18 @@ final class MainViewController: UIViewController {
     
     private func settupUI() {
         view.addSubview(todoCollectioView)
+        view.addSubview(bottomPanelView)
         
         NSLayoutConstraint.activate([
+            bottomPanelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomPanelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomPanelView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomPanelView.heightAnchor.constraint(equalToConstant: 83),
+            
             todoCollectioView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             todoCollectioView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             todoCollectioView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            todoCollectioView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
+            todoCollectioView.bottomAnchor.constraint(equalTo: bottomPanelView.topAnchor),
         ])
     }
     
@@ -62,8 +69,52 @@ final class MainViewController: UIViewController {
         return $0
     }(UICollectionViewFlowLayout())
     
+    private lazy var bottomPanelView: UIView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = .bottomPanel
+        
+        $0.addSubview(allTodoCountLabel)
+        $0.addSubview(createNewTaskButton)
+        
+        NSLayoutConstraint.activate([
+            createNewTaskButton.trailingAnchor.constraint(equalTo: $0.trailingAnchor),
+            createNewTaskButton.topAnchor.constraint(equalTo: $0.topAnchor),
+            createNewTaskButton.bottomAnchor.constraint(equalTo: $0.bottomAnchor, constant: -34),
+            
+            allTodoCountLabel.leadingAnchor.constraint(equalTo: $0.leadingAnchor, constant: 68),
+            allTodoCountLabel.topAnchor.constraint(equalTo: $0.topAnchor, constant: 20),
+            allTodoCountLabel.trailingAnchor.constraint(equalTo: createNewTaskButton.leadingAnchor),
+            allTodoCountLabel.bottomAnchor.constraint(equalTo: $0.bottomAnchor, constant: -49)
+        ])
+        
+        return $0
+    }(UIView())
     
+    private lazy var createNewTaskButton: UIButton = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+        $0.tintColor = .completed
+        $0.widthAnchor.constraint(equalToConstant: 68).isActive = true
+        return $0
+    }(UIButton(primaryAction: createNewTaskAction))
     
+    private lazy var allTodoCountLabel: UILabel = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.textAlignment = .center
+        $0.font = .systemFont(ofSize: 16)
+        $0.text = "0 Задач"
+        $0.textColor = .text
+        $0.numberOfLines = 1
+        $0.minimumScaleFactor = 0.5
+        $0.adjustsFontSizeToFitWidth = true
+        return $0
+    }(UILabel())
+    
+    //MARK: - Action
+    private lazy var createNewTaskAction = UIAction { [weak self] _ in
+        guard let self else { return }
+        self.tapToCreateButton()
+    }
 }
 
 
@@ -95,6 +146,10 @@ extension MainViewController: UICollectionViewDataSource {
 
 //MARK: - MainViewProtocolExt
 extension MainViewController: MainViewProtocol {
+    func tapToCreateButton() {
+        presenter?.presentCreateNewItemModule()
+    }
+    
     func reloadItem(_ item: ToDoItem) {
         print("reloadItem -> MainViewController")
         guard let index = model.firstIndex(where: { $0.id == item.id }) else { return }
@@ -116,6 +171,9 @@ extension MainViewController: MainViewProtocol {
         DispatchQueue.main.async() { [weak self] in
             self?.model = model
             self?.todoCollectioView.reloadData()
+            UIView.animate(withDuration: 0.5) {
+                self?.allTodoCountLabel.text = "\(model.count) Задач"
+            }
         }
     }
     
