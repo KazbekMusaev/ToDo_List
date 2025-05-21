@@ -151,7 +151,7 @@ extension MainViewController: UICollectionViewDelegate {
                 }
                 
                 let share = UIAction(title: "Поделиться", image: UIImage(systemName: "square.and.arrow.up")) { _ in
-                    print("share")
+                    self?.presenter?.tapToSharedBtn(item)
                 }
                 
                 let delete = UIAction(title: "Удалить", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in

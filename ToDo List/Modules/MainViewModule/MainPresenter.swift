@@ -25,6 +25,7 @@ protocol MainPresenterProtocol: AnyObject {
     func showNavController()
     func tapToDeleteItem(_ item: ToDoItem)
     func itemIsDeleted(_ item: ToDoItem)
+    func tapToSharedBtn(_ item: ToDoItem)
 }
 
 final class MainPresenter {
@@ -40,6 +41,10 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainPresenterProtocol {
+    func tapToSharedBtn(_ item: ToDoItem) {
+        router.shareTodo(item)
+    }
+    
     func itemIsDeleted(_ item: ToDoItem) {
         view?.deleteCompleted(item)
     }
