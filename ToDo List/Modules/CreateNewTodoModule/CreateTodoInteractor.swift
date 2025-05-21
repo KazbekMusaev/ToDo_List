@@ -22,7 +22,6 @@ final class CreateTodoInteractor: CreateTodoInteractorProtocol {
             var labelText: String = ""
             if let label, !label.isEmpty {
                 labelText = label
-                print("line 25 \(label)")
             } else {
                 if let firstWord = text.components(separatedBy: " ").first {
                     labelText = firstWord

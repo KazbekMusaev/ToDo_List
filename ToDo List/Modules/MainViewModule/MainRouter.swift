@@ -11,6 +11,8 @@ protocol MainRouterProtocol: AnyObject {
     func showCreateScreen()
     func closeCreateModule()
     func shareTodo(_ item: ToDoItem)
+    func closeEditModule(_ editItem: ToDoItem)
+    func showEditModule(_ item: ToDoItem)
 }
 
 final class MainRouter: MainRouterProtocol {
@@ -23,8 +25,18 @@ final class MainRouter: MainRouterProtocol {
         viewController?.navigationController?.pushViewController(createToDoVC, animated: true)
     }
     
+    func showEditModule(_ item: ToDoItem) {
+        let editToDoVC = EditTodoBuilder.build(delegate: self, item: item)
+        viewController?.navigationController?.pushViewController(editToDoVC, animated: true)
+    }
+    
     func closeCreateModule() {
         presenter?.finishCreateNewTask()
+        presenter?.showNavController()
+    }
+    
+    func closeEditModule(_ editItem: ToDoItem) {
+        presenter?.reloadItem(editItem)
         presenter?.showNavController()
     }
     

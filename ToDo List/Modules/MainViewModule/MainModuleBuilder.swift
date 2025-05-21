@@ -22,6 +22,7 @@ final class MainModuleBuilder {
         router.viewController = viewController
         
         let navController = UINavigationController(rootViewController: viewController)
+        navController.interactivePopGestureRecognizer?.isEnabled = false
         
         return navController
     }

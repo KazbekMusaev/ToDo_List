@@ -24,7 +24,7 @@ final class MainInteractor: MainInteractorProtocol {
         let isLoadFirstData = UserDefaults.standard.bool(forKey: "isLoadFirstData")
         if !isLoadFirstData {
             NetworkService.getData { [weak self] result in
-                print("load from api")
+
                 guard let self else { return }
                 switch result {
                 case .success(let todoData):
@@ -47,7 +47,6 @@ final class MainInteractor: MainInteractorProtocol {
             }
         } else {
             DispatchQueue.global().async { [weak self] in
-                print("load from core data")
                 self?.presenter?.didLoadTasks(CoreManager.filtredData(CoreManager.shared.toDoItems))
             }
         }

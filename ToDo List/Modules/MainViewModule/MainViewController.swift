@@ -147,7 +147,7 @@ extension MainViewController: UICollectionViewDelegate {
             actionProvider: { [weak self] _ in
 
                 let edit = UIAction(title: "Редактировать", image: UIImage(systemName: "pencil")) { _ in
-                    print("edit")
+                    self?.presenter?.tapToEditBtn(item)
                 }
                 
                 let share = UIAction(title: "Поделиться", image: UIImage(systemName: "square.and.arrow.up")) { _ in
@@ -226,7 +226,7 @@ extension MainViewController: MainViewProtocol {
     }
     
     func reloadItem(_ item: ToDoItem) {
-        print("reloadItem -> MainViewController")
+
         guard let index = model.firstIndex(where: { $0.id == item.id }) else { return }
         
         DispatchQueue.main.async { [weak self] in
@@ -238,7 +238,6 @@ extension MainViewController: MainViewProtocol {
     }
     
     func changeItem(_ item: ToDoItem) {
-        print("changeItem -> MainViewController")
         presenter?.updateItem(item)
     }
     
