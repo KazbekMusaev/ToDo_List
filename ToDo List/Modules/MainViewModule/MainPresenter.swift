@@ -11,7 +11,6 @@ protocol MainPresenterProtocol: AnyObject {
     func viewDidLoaded()
     func didLoadTasks(_ model: [ToDoItem])
     func getError(_ error: Error)
-    func didSelectItem()
     func presentCreateNewItemModule()
     //Также эти два метода можно будет использовать при редактировании и удалении таска
     //Метод для обновления данных в кор дата. Который пойдет в interactor
@@ -26,6 +25,7 @@ protocol MainPresenterProtocol: AnyObject {
     func tapToDeleteItem(_ item: ToDoItem)
     func itemIsDeleted(_ item: ToDoItem)
     func tapToSharedBtn(_ item: ToDoItem)
+    func tapToEditBtn(_ item: ToDoItem)
 }
 
 final class MainPresenter {
@@ -41,6 +41,10 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainPresenterProtocol {
+    func tapToEditBtn(_ item: ToDoItem) {
+        router.showEditModule(item)
+    }
+    
     func tapToSharedBtn(_ item: ToDoItem) {
         router.shareTodo(item)
     }
@@ -74,12 +78,10 @@ extension MainPresenter: MainPresenterProtocol {
     }
     
     func reloadItem(_ item: ToDoItem) {
-        print("reloadItem -> MainPresenter")
         view?.reloadItem(item)
     }
     
     func updateItem(_ item: ToDoItem) {
-        print("updateItem -> MainPresenter")
         interactor.updateItem(item)
     }
     
@@ -93,10 +95,6 @@ extension MainPresenter: MainPresenterProtocol {
     
     func getError(_ error: any Error) {
         view?.showError(error.localizedDescription)
-    }
-    
-    func didSelectItem() {
-        print("select")
     }
     
     func presentCreateNewItemModule() {

@@ -28,8 +28,8 @@ final class CreateTodoPresenter {
 
 extension CreateTodoPresenter: CreateTodoPresenterProtocol {
     func dissmisVC() {
-        router.dissmis()
         mainRouterDelegate?.closeCreateModule()
+        router.dissmis()
     }
     
     func createNewTodo(label: String?, text: String) {
