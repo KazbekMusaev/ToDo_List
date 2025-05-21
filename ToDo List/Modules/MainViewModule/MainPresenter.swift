@@ -18,6 +18,8 @@ protocol MainPresenterProtocol: AnyObject {
     func updateItem(_ item: ToDoItem)
     //Метод который вызовется из interactor. Для обновления секции в UICollectionView. Тут передаю модель самого ToDoItem. Чтобы потом обновить model в ViewController, через Id
     func reloadItem(_ item: ToDoItem)
+    func startSeacrh(_ text: String)
+    func searchIsComplete(_ model: [ToDoItem])
 }
 
 final class MainPresenter {
@@ -33,6 +35,14 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainPresenterProtocol {
+    func startSeacrh(_ text: String) {
+        interactor.searchToDos(text)
+    }
+    
+    func searchIsComplete(_ model: [ToDoItem]) {
+        view?.showSearchResult(model)
+    }
+    
     func reloadItem(_ item: ToDoItem) {
         print("reloadItem -> MainPresenter")
         view?.reloadItem(item)

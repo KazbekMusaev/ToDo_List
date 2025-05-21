@@ -10,23 +10,10 @@ import Foundation
 protocol MainInteractorProtocol {
     func fetchData()
     func updateItem(_ item: ToDoItem)
+    func searchToDos(_ text: String)
 }
 
 final class MainInteractor: MainInteractorProtocol {
-    private func saveItemsInCoreData(_ items: [ToDoItem]) {
-        DispatchQueue.global().async {
-            items.forEach { item in
-                CoreManager.shared.createData(item: item)
-                print("save")
-                print(FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first!)
-            }
-        }
-    }
-    
-    func updateItem(_ item: ToDoItem) {
-        print("updateItem -> MainInteractor")
-        presenter?.reloadItem(item)
-    }
     
     weak var presenter: MainPresenterProtocol?
     
@@ -59,21 +46,34 @@ final class MainInteractor: MainInteractorProtocol {
         } else {
             DispatchQueue.global().async { [weak self] in
                 print("load from core data")
-                var model: [ToDoItem] = []
-                CoreManager.shared.toDoItems.forEach { item in
-                    let toDoItem = ToDoItem(
-                        id: Int(item.id),
-                        todo: item.text ?? "nill",
-                        completed: item.isCompleted,
-                        userId: Int(item.userId),
-                        date: item.date,
-                        label: item.label
-                    )
-                    model.append(toDoItem)
-                }
-                self?.presenter?.didLoadTasks(model)
+                self?.presenter?.didLoadTasks(CoreManager.filtredData(CoreManager.shared.toDoItems))
             }
         }
     }
     
+    func searchToDos(_ text: String) {
+        DispatchQueue.global().async { [weak self] in
+            if text.isEmpty, text == "" {
+                self?.presenter?.searchIsComplete(CoreManager.filtredData(CoreManager.shared.toDoItems))
+            } else {
+                let result = CoreManager.shared.toDoItems.filter { $0.text?.range(of: text, options: .caseInsensitive) != nil }
+                self?.presenter?.searchIsComplete(CoreManager.filtredData(result))
+            }
+        }
+    }
+    
+    private func saveItemsInCoreData(_ items: [ToDoItem]) {
+        DispatchQueue.global().async {
+            items.forEach { item in
+                CoreManager.shared.createData(item: item)
+            }
+        }
+    }
+    
+    func updateItem(_ item: ToDoItem) {
+        print("updateItem -> MainInteractor")
+        guard let index = CoreManager.shared.toDoItems.firstIndex(where: { $0.id == item.id }) else { return }
+        CoreManager.shared.toDoItems[index].updateData(newItem: item)
+        presenter?.reloadItem(item)
+    }
 }

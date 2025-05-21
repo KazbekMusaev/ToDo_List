@@ -73,10 +73,21 @@ final class ToDoCell: UICollectionViewCell {
         ])
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        todoDescription.text = nil
+        todoDescription.textColor = .text
+        todoLabel.attributedText = NSMutableAttributedString(string: "")
+        todoLabel.textColor = .text
+        isCompletedBtn.setImage(nil, for: .normal)
+    }
+    
     func configureCell(_ item: ToDoItem) {
         todoItem = item
         todoDescription.text = item.todo
         dateLabel.text = item.date?.getStr()
+        
+        todoLabel.attributedText = NSMutableAttributedString(string: "")
         
         if item.completed {
             isCompletedBtn.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
@@ -101,7 +112,7 @@ final class ToDoCell: UICollectionViewCell {
         } else {
             isCompletedBtn.setImage(UIImage(systemName: "circle"), for: .normal)
             isCompletedBtn.tintColor = .nonCompleted
-            todoLabel.text = item.label
+            todoLabel.attributedText = NSMutableAttributedString(string: item.label ?? "Nill")
         }
     }
     
