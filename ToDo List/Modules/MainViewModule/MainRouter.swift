@@ -9,14 +9,21 @@ import UIKit
 
 protocol MainRouterProtocol: AnyObject {
     func showCreateScreen()
+    func closeCreateModule()
 }
 
 final class MainRouter: MainRouterProtocol {
+    
     weak var presenter: MainPresenterProtocol?
     weak var viewController: MainViewController?
     
     func showCreateScreen() {
-        let createToDoVC = CreateTodoBuilder.build()
+        let createToDoVC = CreateTodoBuilder.build(delegate: self)
         viewController?.navigationController?.pushViewController(createToDoVC, animated: true)
+    }
+    
+    func closeCreateModule() {
+        presenter?.finishCreateNewTask()
+        presenter?.showNavController()
     }
 }

@@ -8,17 +8,18 @@
 import UIKit
 
 final class CreateTodoBuilder {
-    static func build() -> UIViewController {
+    static func build(delegate: MainRouterProtocol) -> UIViewController {
         let viewController = CreateTodoViewController()
-//        let interactor = MainInteractor()
-//        let router = MainRouter()
-//        let presenter = MainPresenter(router: router, interactor: interactor)
-//        
-//        
-//        viewController.presenter = presenter
-//        presenter.view = viewController
-//        interactor.presenter = presenter
-//        router.presenter = presenter
+        let interactor = CreateTodoInteractor()
+        let router = CreateTodoRouter()
+        let presenter = CreateTodoPresenter(interactor: interactor, router: router)
+        
+        viewController.presenter = presenter
+        presenter.view = viewController
+        presenter.mainRouterDelegate = delegate
+        interactor.presenter = presenter
+        router.presenter = presenter
+        router.viewController = viewController
         
         return viewController
     }
