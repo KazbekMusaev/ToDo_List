@@ -11,6 +11,7 @@ protocol MainInteractorProtocol {
     func fetchData()
     func updateItem(_ item: ToDoItem)
     func searchToDos(_ text: String)
+    func getUpdateData()
 }
 
 final class MainInteractor: MainInteractorProtocol {
@@ -48,6 +49,12 @@ final class MainInteractor: MainInteractorProtocol {
                 print("load from core data")
                 self?.presenter?.didLoadTasks(CoreManager.filtredData(CoreManager.shared.toDoItems))
             }
+        }
+    }
+    
+    func getUpdateData() {
+        DispatchQueue.global().async { [weak self] in
+            self?.presenter?.updateCollectionView(CoreManager.filtredData(CoreManager.shared.toDoItems))
         }
     }
     

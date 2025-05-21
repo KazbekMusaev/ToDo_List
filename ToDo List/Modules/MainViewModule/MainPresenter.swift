@@ -20,6 +20,9 @@ protocol MainPresenterProtocol: AnyObject {
     func reloadItem(_ item: ToDoItem)
     func startSeacrh(_ text: String)
     func searchIsComplete(_ model: [ToDoItem])
+    func finishCreateNewTask()
+    func updateCollectionView(_ model: [ToDoItem])
+    func showNavController()
 }
 
 final class MainPresenter {
@@ -35,6 +38,18 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainPresenterProtocol {
+    func showNavController() {
+        view?.showNavigationController()
+    }
+    
+    func updateCollectionView(_ model: [ToDoItem]) {
+        view?.reloadCollectionView(model)
+    }
+    
+    func finishCreateNewTask() {
+        interactor.getUpdateData()
+    }
+    
     func startSeacrh(_ text: String) {
         interactor.searchToDos(text)
     }

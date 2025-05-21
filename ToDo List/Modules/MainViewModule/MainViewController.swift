@@ -14,6 +14,8 @@ protocol MainViewProtocol: AnyObject {
     func reloadItem(_ item: ToDoItem)
     func tapToCreateButton()
     func showSearchResult(_ model: [ToDoItem])
+    func reloadCollectionView(_ model: [ToDoItem])
+    func showNavigationController()
 }
 
 final class MainViewController: UIViewController {
@@ -23,7 +25,6 @@ final class MainViewController: UIViewController {
     //MARK: - View life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        settupView()
         presenter?.viewDidLoaded()
     }
     
@@ -156,6 +157,17 @@ extension MainViewController: UICollectionViewDataSource {
 
 //MARK: - MainViewProtocolExt
 extension MainViewController: MainViewProtocol {
+    func showNavigationController() {
+        navigationController?.navigationBar.isHidden = false
+    }
+    
+    func reloadCollectionView(_ model: [ToDoItem]) {
+        DispatchQueue.main.async { [weak self] in
+            self?.model = model
+            self?.todoCollectioView.reloadData()
+        }
+    }
+    
     func showSearchResult(_ model: [ToDoItem]) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -187,7 +199,9 @@ extension MainViewController: MainViewProtocol {
     }
     
     func showTasks(_ model: [ToDoItem]) {
+
         DispatchQueue.main.async() { [weak self] in
+            self?.settupView()
             self?.model = model
             self?.todoCollectioView.reloadData()
             UIView.animate(withDuration: 0.5) {
