@@ -12,6 +12,7 @@ protocol MainInteractorProtocol {
     func updateItem(_ item: ToDoItem)
     func searchToDos(_ text: String)
     func getUpdateData()
+    func deleteItem(_ item: ToDoItem)
 }
 
 final class MainInteractor: MainInteractorProtocol {
@@ -78,9 +79,20 @@ final class MainInteractor: MainInteractorProtocol {
     }
     
     func updateItem(_ item: ToDoItem) {
-        print("updateItem -> MainInteractor")
-        guard let index = CoreManager.shared.toDoItems.firstIndex(where: { $0.id == item.id }) else { return }
-        CoreManager.shared.toDoItems[index].updateData(newItem: item)
-        presenter?.reloadItem(item)
+        DispatchQueue.global().async { [weak self] in
+            guard let index = CoreManager.shared.toDoItems.firstIndex(where: { $0.id == item.id }) else { return }
+            CoreManager.shared.toDoItems[index].updateData(newItem: item)
+            self?.presenter?.reloadItem(item)
+        }
     }
+    
+    func deleteItem(_ item: ToDoItem) {
+        DispatchQueue.global().async { [weak self] in
+            guard let index = CoreManager.shared.toDoItems.firstIndex(where: { $0.id == item.id }) else {
+                return }
+            CoreManager.shared.toDoItems[index].deleteData()
+            self?.presenter?.itemIsDeleted(item)
+        }
+    }
+    
 }

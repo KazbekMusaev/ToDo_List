@@ -23,6 +23,8 @@ protocol MainPresenterProtocol: AnyObject {
     func finishCreateNewTask()
     func updateCollectionView(_ model: [ToDoItem])
     func showNavController()
+    func tapToDeleteItem(_ item: ToDoItem)
+    func itemIsDeleted(_ item: ToDoItem)
 }
 
 final class MainPresenter {
@@ -38,6 +40,14 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainPresenterProtocol {
+    func itemIsDeleted(_ item: ToDoItem) {
+        view?.deleteCompleted(item)
+    }
+    
+    func tapToDeleteItem(_ item: ToDoItem) {
+        interactor.deleteItem(item)
+    }
+    
     func showNavController() {
         view?.showNavigationController()
     }
