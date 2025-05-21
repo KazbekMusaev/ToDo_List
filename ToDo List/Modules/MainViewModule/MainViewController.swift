@@ -31,6 +31,15 @@ final class MainViewController: UIViewController {
         view.backgroundColor = .background
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "Задачи"
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Поиск"
+        searchController.obscuresBackgroundDuringPresentation = false
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
+        searchController.searchBar.searchTextField.delegate = self
+        
         settupUI()
     }
     
@@ -182,4 +191,17 @@ extension MainViewController: MainViewProtocol {
 //            print(errorText)
 //        }
     }
+}
+
+//MARK: - UISearchControllerDelegate
+extension MainViewController: UISearchTextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+    }
+    
+    //Здесь будет реализация поиска. Сделаю при вводе каждой новой буквы, так как данные хранятся в кор дате. И у нас не идет загрузка из сети
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        print(textField.text)
+    }
+    
 }
