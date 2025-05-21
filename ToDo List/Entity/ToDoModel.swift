@@ -16,8 +16,10 @@ struct ToDoModel: Decodable {
 
 struct ToDoItem: Decodable {
     let id: Int
-    let todo: String
-    let completed: Bool
+    //Эти 2 свойства в дальнейшем должны меняться. Меняю на var
+    var todo: String
+    var completed: Bool
+    
     let userId: Int
     //Добавляю дату, после первой загрузки из Api, поставлю сюда текущую дату, т.е сегодня. Дальше хочу использовать эту же модель и в CoreData
     var date: Date?

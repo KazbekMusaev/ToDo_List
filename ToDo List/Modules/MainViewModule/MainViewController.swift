@@ -10,7 +10,8 @@ import UIKit
 protocol MainViewProtocol: AnyObject {
     func showTasks(_ model: [ToDoItem])
     func showError(_ errorText: String)
-    
+    func changeItem(_ item: ToDoItem)
+    func reloadItem(_ item: ToDoItem)
 }
 
 final class MainViewController: UIViewController {
@@ -27,7 +28,7 @@ final class MainViewController: UIViewController {
     //MARK: - Functions
     private func settupView() {
         view.backgroundColor = .background
-        navigationItem.largeTitleDisplayMode = .automatic
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = "Задачи"
         settupUI()
     }
@@ -84,6 +85,7 @@ extension MainViewController: UICollectionViewDataSource {
         }
         let item = model[indexPath.row]
         cell.configureCell(item)
+        cell.delegate = self
         return cell
     }
     
@@ -93,6 +95,23 @@ extension MainViewController: UICollectionViewDataSource {
 
 //MARK: - MainViewProtocolExt
 extension MainViewController: MainViewProtocol {
+    func reloadItem(_ item: ToDoItem) {
+        print("reloadItem -> MainViewController")
+        guard let index = model.firstIndex(where: { $0.id == item.id }) else { return }
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.model[index] = item
+            self.todoCollectioView.reloadItems(at: [IndexPath(item: index, section: 0)])
+        }
+        
+    }
+    
+    func changeItem(_ item: ToDoItem) {
+        print("changeItem -> MainViewController")
+        presenter?.updateItem(item)
+    }
+    
     func showTasks(_ model: [ToDoItem]) {
         DispatchQueue.main.async() { [weak self] in
             self?.model = model

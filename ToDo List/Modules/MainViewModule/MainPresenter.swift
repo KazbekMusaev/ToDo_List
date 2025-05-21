@@ -13,6 +13,11 @@ protocol MainPresenterProtocol: AnyObject {
     func getError(_ error: Error)
     func didSelectItem()
     func presentCreateNewItemModule()
+    //Также эти два метода можно будет использовать при редактировании и удалении таска
+    //Метод для обновления данных в кор дата. Который пойдет в interactor
+    func updateItem(_ item: ToDoItem)
+    //Метод который вызовется из interactor. Для обновления секции в UICollectionView. Тут передаю модель самого ToDoItem. Чтобы потом обновить model в ViewController, через Id
+    func reloadItem(_ item: ToDoItem)
 }
 
 final class MainPresenter {
@@ -28,6 +33,15 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainPresenterProtocol {
+    func reloadItem(_ item: ToDoItem) {
+        print("reloadItem -> MainPresenter")
+        view?.reloadItem(item)
+    }
+    
+    func updateItem(_ item: ToDoItem) {
+        print("updateItem -> MainPresenter")
+        interactor.updateItem(item)
+    }
     
     func viewDidLoaded() {
         interactor.fetchData()

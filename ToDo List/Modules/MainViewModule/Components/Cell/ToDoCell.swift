@@ -10,6 +10,11 @@ import UIKit
 final class ToDoCell: UICollectionViewCell {
     
     static let reuseId = "ToDoCell"
+
+    //Передаю сюда item, для того, чтобы в дальнейшем создать механизм нажатия кнопки completed
+    var todoItem: ToDoItem?
+    
+    weak var delegate: MainViewProtocol?
     
     //MARK: - Init
     override init(frame: CGRect) {
@@ -26,9 +31,9 @@ final class ToDoCell: UICollectionViewCell {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.heightAnchor.constraint(equalToConstant: 48).isActive = true
         $0.widthAnchor.constraint(equalToConstant: 24).isActive = true
-        $0.backgroundColor = .red
+        $0.setImage(UIImage(systemName: "circle"), for: .normal)
         return $0
-    }(UIButton())
+    }(UIButton(primaryAction: isCompleteAction))
     
     private lazy var todoLabel: UILabel = ComponentBuilder.getLabelForTodo()
     private lazy var todoDescription: UILabel = ComponentBuilder.getDescriptionForTodo()
@@ -69,8 +74,43 @@ final class ToDoCell: UICollectionViewCell {
     }
     
     func configureCell(_ item: ToDoItem) {
-        todoLabel.text = item.label
+        todoItem = item
         todoDescription.text = item.todo
         dateLabel.text = item.date?.getStr()
+        
+        if item.completed {
+            isCompletedBtn.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
+            isCompletedBtn.tintColor = .completed
+            todoDescription.textColor = .dateLabel
+            todoLabel.textColor = .dateLabel
+     
+            let attributedString = NSMutableAttributedString(string: item.label ?? "Nill")
+            attributedString.addAttribute(
+                .strikethroughStyle,
+                value: NSUnderlineStyle.single.rawValue,
+                range: NSRange(location: 0, length: attributedString.length)
+            )
+
+            attributedString.addAttribute(
+                .strikethroughColor,
+                value: UIColor.dateLabel,
+                range: NSRange(location: 0, length: attributedString.length)
+            )
+
+            todoLabel.attributedText = attributedString
+        } else {
+            isCompletedBtn.setImage(UIImage(systemName: "circle"), for: .normal)
+            isCompletedBtn.tintColor = .nonCompleted
+            todoLabel.text = item.label
+        }
     }
+    
+    //MARK: - Actions
+    private lazy var isCompleteAction = UIAction { [weak self] _ in
+        guard let self else { return }
+        guard var todo = self.todoItem else { return }
+        todo.completed.toggle()
+        self.delegate?.changeItem(todo)
+    }
+    
 }

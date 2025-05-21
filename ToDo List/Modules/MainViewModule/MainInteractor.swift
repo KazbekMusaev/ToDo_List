@@ -9,9 +9,15 @@ import Foundation
 
 protocol MainInteractorProtocol {
     func fetchData()
+    func updateItem(_ item: ToDoItem)
 }
 
 final class MainInteractor: MainInteractorProtocol {
+    func updateItem(_ item: ToDoItem) {
+        print("updateItem -> MainInteractor")
+        presenter?.reloadItem(item)
+    }
+    
     weak var presenter: MainPresenterProtocol?
     
     func fetchData() {
