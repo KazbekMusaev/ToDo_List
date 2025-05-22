@@ -40,6 +40,7 @@ final class MainRouter: MainRouterProtocol {
         presenter?.showNavController()
     }
     
+    //Здесь вызов UIActivityViewController, происходит в global потоке, я специально добавил задержку в 1 секунду, чтобы не было системных ошибок и зависаний. Не могу понять почему именно с этим UIActivityController вечно выходят баги)
     func shareTodo(_ item: ToDoItem) {
         DispatchQueue.global().async {
             let activityVC = UIActivityViewController(
@@ -54,7 +55,7 @@ final class MainRouter: MainRouterProtocol {
                 ],
                 applicationActivities: nil
             )
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
                 self?.viewController?.present(activityVC, animated: true)
             }
         }
