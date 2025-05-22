@@ -75,7 +75,7 @@ final class MainViewController: UIViewController {
     }(UICollectionView(frame: .zero, collectionViewLayout: layout))
     
     private lazy var layout: UICollectionViewFlowLayout = {
-        $0.itemSize = CGSize(width: view.frame.width, height: 90)
+        $0.estimatedItemSize = CGSize(width: view.frame.width, height: 90)
         $0.scrollDirection = .vertical
         $0.minimumLineSpacing = 0
         return $0
@@ -174,6 +174,7 @@ extension MainViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ToDoCell.reuseId, for: indexPath) as? ToDoCell else {
             return UICollectionViewCell()
         }
+        cell.maxWidth = view.frame.width
         let item = model[indexPath.row]
         cell.configureCell(item)
         cell.delegate = self
