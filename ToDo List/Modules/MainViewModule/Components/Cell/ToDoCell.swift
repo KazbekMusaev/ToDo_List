@@ -9,6 +9,8 @@ import UIKit
 
 final class ToDoCell: UICollectionViewCell {
     
+    var maxWidth: CGFloat = 0
+    
     static let reuseId = "ToDoCell"
 
     //Передаю сюда item, для того, чтобы в дальнейшем создать механизм нажатия кнопки completed
@@ -49,7 +51,9 @@ final class ToDoCell: UICollectionViewCell {
         addSubview(todoDescription)
         addSubview(dateLabel)
         addSubview(divider)
-        
+    }
+    
+    private func activeConstraint() {
         NSLayoutConstraint.activate([
             isCompletedBtn.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             isCompletedBtn.topAnchor.constraint(equalTo: topAnchor),
@@ -70,6 +74,7 @@ final class ToDoCell: UICollectionViewCell {
             divider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             divider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             divider.bottomAnchor.constraint(equalTo: bottomAnchor),
+            divider.widthAnchor.constraint(equalToConstant: maxWidth - 40)
         ])
     }
     
@@ -114,6 +119,7 @@ final class ToDoCell: UICollectionViewCell {
             isCompletedBtn.tintColor = .nonCompleted
             todoLabel.attributedText = NSMutableAttributedString(string: item.label ?? "Nill")
         }
+        activeConstraint()
     }
     
     //MARK: - Actions
